@@ -1,35 +1,40 @@
-var test = require('tape');
-var parse = require('../');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('boolean default true', function (t) {
-    var argv = parse([], {
-        boolean: 'sometrue',
-        default: { sometrue: true }
-    });
-    t.equal(argv.sometrue, true);
-    t.end();
+describe('Default Boolean', function () {
+	
+	it('boolean default true', function () {
+		const argv = parse([], {
+			boolean: 'sometrue',
+			default: { sometrue: true }
+		});
+		expect(argv.sometrue).to.eql(true);
+	});
+
+	it('boolean default false', function () {
+		const argv = parse([], {
+			boolean: 'somefalse',
+			default: { somefalse: false }
+		});
+		expect(argv.somefalse).to.eql(false);
+	});
+
+	it('boolean default to null', function () {
+
+		let argv;
+
+		argv = parse([], {
+			boolean: 'maybe',
+			default: { maybe: null }
+		});
+		expect(argv.maybe).to.eql(null);
+
+		argv = parse(['--maybe'], {
+			boolean: 'maybe',
+			default: { maybe: null }
+		});
+		expect(argv.maybe).to.eql(true);
+
+	});
+
 });
-
-test('boolean default false', function (t) {
-    var argv = parse([], {
-        boolean: 'somefalse',
-        default: { somefalse: false }
-    });
-    t.equal(argv.somefalse, false);
-    t.end();
-});
-
-test('boolean default to null', function (t) {
-    var argv = parse([], {
-        boolean: 'maybe',
-        default: { maybe: null }
-    });
-    t.equal(argv.maybe, null);
-    var argv = parse(['--maybe'], {
-        boolean: 'maybe',
-        default: { maybe: null }
-    });
-    t.equal(argv.maybe, true);
-    t.end();
-
-})

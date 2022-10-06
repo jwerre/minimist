@@ -1,102 +1,102 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('boolean and alias is not unknown', function (t) {
-    var unknown = [];
-    function unknownFn(arg) {
-        unknown.push(arg);
-        return false;
-    }
-    var aliased = [ '-h', 'true', '--derp', 'true' ];
-    var regular = [ '--herp',  'true', '-d', 'true' ];
-    var opts = {
-        alias: { h: 'herp' },
-        boolean: 'h',
-        unknown: unknownFn
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
+describe('Unknown', function () {	
 
-    t.same(unknown, ['--derp', '-d']);
-    t.end();
-});
+	it('boolean and alias is not unknown', function () {
+		const unknown = [];
+		function unknownFn(arg) {
+			unknown.push(arg);
+			return false;
+		}
+		const aliased = [ '-h', 'true', '--derp', 'true' ];
+		const regular = [ '--herp',  'true', '-d', 'true' ];
+		const opts = {
+			alias: { h: 'herp' },
+			boolean: 'h',
+			unknown: unknownFn
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
 
-test('flag boolean true any double hyphen argument is not unknown', function (t) {
-    var unknown = [];
-    function unknownFn(arg) {
-        unknown.push(arg);
-        return false;
-    }
-    var argv = parse(['--honk', '--tacos=good', 'cow', '-p', '55'], {
-        boolean: true,
-        unknown: unknownFn
-    });
-    t.same(unknown, ['--tacos=good', 'cow', '-p']);
-    t.same(argv, {
-        honk: true,
-        _: []
-    });
-    t.end();
-});
+		expect(unknown).to.deep.equal(['--derp', '-d']);
+	});
 
-test('string and alias is not unknown', function (t) {
-    var unknown = [];
-    function unknownFn(arg) {
-        unknown.push(arg);
-        return false;
-    }
-    var aliased = [ '-h', 'hello', '--derp', 'goodbye' ];
-    var regular = [ '--herp',  'hello', '-d', 'moon' ];
-    var opts = {
-        alias: { h: 'herp' },
-        string: 'h',
-        unknown: unknownFn
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
+	it('flag boolean true any double hyphen argument is not unknown', function () {
+		const unknown = [];
+		function unknownFn(arg) {
+			unknown.push(arg);
+			return false;
+		}
+		const argv = parse(['--honk', '--tacos=good', 'cow', '-p', '55'], {
+			boolean: true,
+			unknown: unknownFn
+		});
+		expect(unknown).to.deep.equal( ['--tacos=good', 'cow', '-p']);
+		expect(argv).to.deep.equal( {
+			honk: true,
+			_: []
+		});
+	});
 
-    t.same(unknown, ['--derp', '-d']);
-    t.end();
-});
+	it('string and alias is not unknown', function () {
+		const unknown = [];
+		function unknownFn(arg) {
+			unknown.push(arg);
+			return false;
+		}
+		const aliased = [ '-h', 'hello', '--derp', 'goodbye' ];
+		const regular = [ '--herp',  'hello', '-d', 'moon' ];
+		const opts = {
+			alias: { h: 'herp' },
+			string: 'h',
+			unknown: unknownFn
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
 
-test('default and alias is not unknown', function (t) {
-    var unknown = [];
-    function unknownFn(arg) {
-        unknown.push(arg);
-        return false;
-    }
-    var aliased = [ '-h', 'hello' ];
-    var regular = [ '--herp',  'hello' ];
-    var opts = {
-        default: { 'h': 'bar' },
-        alias: { 'h': 'herp' },
-        unknown: unknownFn
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
+		expect(unknown).to.deep.equal(['--derp', '-d']);
+	});
 
-    t.same(unknown, []);
-    t.end();
-    unknownFn(); // exercise fn for 100% coverage
-});
+	it('default and alias is not unknown', function () {
+		const unknown = [];
+		function unknownFn(arg) {
+			unknown.push(arg);
+			return false;
+		}
+		const aliased = [ '-h', 'hello' ];
+		const regular = [ '--herp',  'hello' ];
+		const opts = {
+			default: { 'h': 'bar' },
+			alias: { 'h': 'herp' },
+			unknown: unknownFn
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
 
-test('value following -- is not unknown', function (t) {
-    var unknown = [];
-    function unknownFn(arg) {
-        unknown.push(arg);
-        return false;
-    }
-    var aliased = [ '--bad', '--', 'good', 'arg' ];
-    var opts = {
-        '--': true,
-        unknown: unknownFn
-    };
-    var argv = parse(aliased, opts);
+		expect(unknown).to.deep.equal([]);
+		unknownFn(); // exercise fn for 100% coverage
+	});
 
-    t.same(unknown, ['--bad']);
-    t.same(argv, {
-        '--': ['good', 'arg'],
-        '_': []
-    })
-    t.end();
+	it('value following -- is not unknown', function () {
+		const unknown = [];
+		function unknownFn(arg) {
+			unknown.push(arg);
+			return false;
+		}
+		const aliased = [ '--bad', '--', 'good', 'arg' ];
+		const opts = {
+			'--': true,
+			unknown: unknownFn
+		};
+		const argv = parse(aliased, opts);
+
+		expect(unknown).to.deep.equal(['--bad']);
+		expect(argv).to.deep.equal({
+			'--': ['good', 'arg'],
+			'_': []
+		})
+	});
+
+
 });

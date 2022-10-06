@@ -1,9 +1,11 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('parse with modifier functions' , function (t) {
-    t.plan(1);
-    
-    var argv = parse([ '-b', '123' ], { boolean: 'b' });
-    t.deepEqual(argv, { b: true, _: [123] });
+describe('Parse modified', function () {
+	
+	it('parse with modifier functions' , function () {
+		const argv = parse([ '-b', '123' ], { boolean: 'b' });
+		expect(argv).to.deep.equal({ b: true, _: [123] });
+	});
+
 });

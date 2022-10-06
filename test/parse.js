@@ -1,197 +1,198 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('parse args', function (t) {
-    t.deepEqual(
-        parse([ '--no-moo' ]),
-        { moo : false, _ : [] },
-        'no'
-    );
-    t.deepEqual(
-        parse([ '-v', 'a', '-v', 'b', '-v', 'c' ]),
-        { v : ['a','b','c'], _ : [] },
-        'multi'
-    );
-    t.end();
-});
- 
-test('comprehensive', function (t) {
-    t.deepEqual(
-        parse([
-            '--name=meowmers', 'bare', '-cats', 'woo',
-            '-h', 'awesome', '--multi=quux',
-            '--key', 'value',
-            '-b', '--bool', '--no-meep', '--multi=baz',
-            '--', '--not-a-flag', 'eek'
-        ]),
-        {
-            c : true,
-            a : true,
-            t : true,
-            s : 'woo',
-            h : 'awesome',
-            b : true,
-            bool : true,
-            key : 'value',
-            multi : [ 'quux', 'baz' ],
-            meep : false,
-            name : 'meowmers',
-            _ : [ 'bare', '--not-a-flag', 'eek' ]
-        }
-    );
-    t.end();
-});
+describe('Parse', function () {
 
-test('flag boolean', function (t) {
-    var argv = parse([ '-t', 'moo' ], { boolean: 't' });
-    t.deepEqual(argv, { t : true, _ : [ 'moo' ] });
-    t.deepEqual(typeof argv.t, 'boolean');
-    t.end();
-});
+	it('parse args', function () {
+		expect(
+			parse([ '--no-moo' ])
+		).to.deep.equal(
+			{ moo : false, _ : [] },
+			'no'
+		);
+		expect(
+			parse([ '-v', 'a', '-v', 'b', '-v', 'c' ])
+		).to.deep.equal(
+			{ v : ['a','b','c'], _ : [] },
+			'multi'
+		);
+	});
+	
+	it('comprehensive', function () {
+		expect(
+			parse([
+				'--name=meowmers', 'bare', '-cats', 'woo',
+				'-h', 'awesome', '--multi=quux',
+				'--key', 'value',
+				'-b', '--bool', '--no-meep', '--multi=baz',
+				'--', '--not-a-flag', 'eek'
+			]),
+		).to.deep.equal(
+			{
+				c : true,
+				a : true,
+				t : true,
+				s : 'woo',
+				h : 'awesome',
+				b : true,
+				bool : true,
+				key : 'value',
+				multi : [ 'quux', 'baz' ],
+				meep : false,
+				name : 'meowmers',
+				_ : [ 'bare', '--not-a-flag', 'eek' ]
+			}
+		);
+	});
 
-test('flag boolean value', function (t) {
-    var argv = parse(['--verbose', 'false', 'moo', '-t', 'true'], {
-        boolean: [ 't', 'verbose' ],
-        default: { verbose: true }
-    });
-    
-    t.deepEqual(argv, {
-        verbose: false,
-        t: true,
-        _: ['moo']
-    });
-    
-    t.deepEqual(typeof argv.verbose, 'boolean');
-    t.deepEqual(typeof argv.t, 'boolean');
-    t.end();
-});
+	it('flag boolean', function () {
+		const argv = parse([ '-t', 'moo' ], { boolean: 't' });
+		expect(argv).to.deep.equal({ t : true, _ : [ 'moo' ] });
+		expect(typeof argv.t).to.eql('boolean');
+	});
 
-test('newlines in params' , function (t) {
-    var args = parse([ '-s', "X\nX" ])
-    t.deepEqual(args, { _ : [], s : "X\nX" });
-    
-    // reproduce in bash:
-    // VALUE="new
-    // line"
-    // node program.js --s="$VALUE"
-    args = parse([ "--s=X\nX" ])
-    t.deepEqual(args, { _ : [], s : "X\nX" });
-    t.end();
-});
+	it('flag boolean value', function () {
+		const argv = parse(['--verbose', 'false', 'moo', '-t', 'true'], {
+			boolean: [ 't', 'verbose' ],
+			default: { verbose: true }
+		});
+		
+		expect(argv).to.deep.equal({
+			verbose: false,
+			t: true,
+			_: ['moo']
+		});
+		
+		expect(typeof argv.verbose).to.eql('boolean');
+		expect(typeof argv.t).to.eql('boolean');
+	});
 
-test('strings' , function (t) {
-    var s = parse([ '-s', '0001234' ], { string: 's' }).s;
-    t.equal(s, '0001234');
-    t.equal(typeof s, 'string');
-    
-    var x = parse([ '-x', '56' ], { string: 'x' }).x;
-    t.equal(x, '56');
-    t.equal(typeof x, 'string');
-    t.end();
-});
+	it('newlines in params' , function () {
 
-test('stringArgs', function (t) {
-    var s = parse([ '  ', '  ' ], { string: '_' })._;
-    t.same(s.length, 2);
-    t.same(typeof s[0], 'string');
-    t.same(s[0], '  ');
-    t.same(typeof s[1], 'string');
-    t.same(s[1], '  ');
-    t.end();
-});
+		let args;
 
-test('empty strings', function(t) {
-    var s = parse([ '-s' ], { string: 's' }).s;
-    t.equal(s, '');
-    t.equal(typeof s, 'string');
+		args = parse([ '-s', "X\nX" ])
 
-    var str = parse([ '--str' ], { string: 'str' }).str;
-    t.equal(str, '');
-    t.equal(typeof str, 'string');
+		expect(args).to.deep.equal({ _ : [], s : "X\nX" });
+		
+		// reproduce in bash:
+		// VALUE="new
+		// line"
+		// node program.js --s="$VALUE"
+		args = parse([ "--s=X\nX" ])
+		expect(args).to.deep.equal({ _ : [], s : "X\nX" });
+	});
 
-    var letters = parse([ '-art' ], {
-        string: [ 'a', 't' ]
-    });
+	it('strings' , function () {
+		const s = parse([ '-s', '0001234' ], { string: 's' }).s;
+		expect(s).to.eql('0001234');
+		expect(typeof s).to.eql('string');
+		
+		const x = parse([ '-x', '56' ], { string: 'x' }).x;
+		expect(x).to.eql('56');
+		expect(typeof x).to.eql('string');
+	});
 
-    t.equal(letters.a, '');
-    t.equal(letters.r, true);
-    t.equal(letters.t, '');
+	it('stringArgs', function () {
+		const s = parse([ '  ', '  ' ], { string: '_' })._;
+		expect(s).to.have.length(2);
+		expect(typeof s[0]).to.eql('string');
+		expect(s[0]).to.eql('  ');
+		expect(typeof s[1]).to.eql('string');
+		expect(s[1]).to.eql('  ');
+	});
 
-    t.end();
-});
+	it('empty strings', function() {
+		const s = parse([ '-s' ], { string: 's' }).s;
+		expect(s).to.eql('');
+		expect(typeof s).to.eql('string');
+
+		const str = parse([ '--str' ], { string: 'str' }).str;
+		expect(str, '');
+		expect(typeof str).to.eql('string');
+
+		const letters = parse([ '-art' ], {
+			string: [ 'a', 't' ]
+		});
+
+		expect(letters.a).to.eql('');
+		expect(letters.r).to.eql(true);
+		expect(letters.t).to.eql('');
+
+	});
 
 
-test('string and alias', function(t) {
-    var x = parse([ '--str',  '000123' ], {
-        string: 's',
-        alias: { s: 'str' }
-    });
+	it('string and alias', function() {
+		const x = parse([ '--str',  '000123' ], {
+			string: 's',
+			alias: { s: 'str' }
+		});
 
-    t.equal(x.str, '000123');
-    t.equal(typeof x.str, 'string');
-    t.equal(x.s, '000123');
-    t.equal(typeof x.s, 'string');
+		expect(x.str).to.eql('000123');
+		expect(typeof x.str).to.eql('string');
+		expect(x.s).to.eql('000123');
+		expect(typeof x.s).to.eql('string');
 
-    var y = parse([ '-s',  '000123' ], {
-        string: 'str',
-        alias: { str: 's' }
-    });
+		const y = parse([ '-s',  '000123' ], {
+			string: 'str',
+			alias: { str: 's' }
+		});
 
-    t.equal(y.str, '000123');
-    t.equal(typeof y.str, 'string');
-    t.equal(y.s, '000123');
-    t.equal(typeof y.s, 'string');
-    t.end();
-});
+		expect(y.str).to.eql('000123');
+		expect(typeof y.str).to.eql('string');
+		expect(y.s).to.eql('000123');
+		expect(typeof y.s).to.eql('string');
+	});
 
-test('slashBreak', function (t) {
-    t.same(
-        parse([ '-I/foo/bar/baz' ]),
-        { I : '/foo/bar/baz', _ : [] }
-    );
-    t.same(
-        parse([ '-xyz/foo/bar/baz' ]),
-        { x : true, y : true, z : '/foo/bar/baz', _ : [] }
-    );
-    t.end();
-});
+	it('slashBreak', function () {
+		expect(
+			parse([ '-I/foo/bar/baz' ]),
+		).to.deep.equal(
+			{ I : '/foo/bar/baz', _ : [] }
+		);
+		expect(
+			parse([ '-xyz/foo/bar/baz' ]),
+		).to.deep.equal(
+			{ x : true, y : true, z : '/foo/bar/baz', _ : [] }
+		);
+	});
 
-test('alias', function (t) {
-    var argv = parse([ '-f', '11', '--zoom', '55' ], {
-        alias: { z: 'zoom' }
-    });
-    t.equal(argv.zoom, 55);
-    t.equal(argv.z, argv.zoom);
-    t.equal(argv.f, 11);
-    t.end();
-});
+	it('alias', function () {
+		const argv = parse([ '-f', '11', '--zoom', '55' ], {
+			alias: { z: 'zoom' }
+		});
+		expect(argv.zoom).to.eql(55);
+		expect(argv.z).to.eql(argv.zoom);
+		expect(argv.f).to.eql(11);
+	});
 
-test('multiAlias', function (t) {
-    var argv = parse([ '-f', '11', '--zoom', '55' ], {
-        alias: { z: [ 'zm', 'zoom' ] }
-    });
-    t.equal(argv.zoom, 55);
-    t.equal(argv.z, argv.zoom);
-    t.equal(argv.z, argv.zm);
-    t.equal(argv.f, 11);
-    t.end();
-});
+	it('multiAlias', function () {
+		const argv = parse([ '-f', '11', '--zoom', '55' ], {
+			alias: { z: [ 'zm', 'zoom' ] }
+		});
+		expect(argv.zoom).to.eql(55);
+		expect(argv.z).to.eql(argv.zoom);
+		expect(argv.z).to.eql(argv.zm);
+		expect(argv.f).to.eql(11);
+	});
 
-test('nested dotted objects', function (t) {
-    var argv = parse([
-        '--foo.bar', '3', '--foo.baz', '4',
-        '--foo.quux.quibble', '5', '--foo.quux.o_O',
-        '--beep.boop'
-    ]);
-    
-    t.same(argv.foo, {
-        bar : 3,
-        baz : 4,
-        quux : {
-            quibble : 5,
-            o_O : true
-        }
-    });
-    t.same(argv.beep, { boop : true });
-    t.end();
+	it('nested dotted objects', function () {
+		const argv = parse([
+			'--foo.bar', '3', '--foo.baz', '4',
+			'--foo.quux.quibble', '5', '--foo.quux.o_O',
+			'--beep.boop'
+		]);
+		
+		expect(argv.foo).to.deep.equal({
+			bar : 3,
+			baz : 4,
+			quux : {
+				quibble : 5,
+				o_O : true
+			}
+		});
+		expect(argv.beep).to.deep.equal({ boop : true });
+	});
+
+
 });

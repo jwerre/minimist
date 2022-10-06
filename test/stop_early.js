@@ -1,15 +1,21 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('stops parsing on the first non-option when stopEarly is set', function (t) {
-    var argv = parse(['--aaa', 'bbb', 'ccc', '--ddd'], {
-        stopEarly: true
-    });
 
-    t.deepEqual(argv, {
-        aaa: 'bbb',
-        _: ['ccc', '--ddd']
-    });
+describe('Stop early', function () {
+	
 
-    t.end();
+	it('stops parsing on the first non-option when stopEarly is set', function () {
+		const argv = parse(['--aaa', 'bbb', 'ccc', '--ddd'], {
+			stopEarly: true
+		});
+
+		expect(argv).to.deep.equal({
+			aaa: 'bbb',
+			_: ['ccc', '--ddd']
+		});
+
+	});
+
+
 });

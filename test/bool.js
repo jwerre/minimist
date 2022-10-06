@@ -1,178 +1,175 @@
-var parse = require('../');
-var test = require('tape');
+import {expect} from 'chai'
+import parse from '../index.js';
 
-test('flag boolean default false', function (t) {
-    var argv = parse(['moo'], {
-        boolean: ['t', 'verbose'],
-        default: { verbose: false, t: false }
-    });
-    
-    t.deepEqual(argv, {
-        verbose: false,
-        t: false,
-        _: ['moo']
-    });
-    
-    t.deepEqual(typeof argv.verbose, 'boolean');
-    t.deepEqual(typeof argv.t, 'boolean');
-    t.end();
 
-});
+describe('Boolean', function () {
+	
 
-test('boolean groups', function (t) {
-    var argv = parse([ '-x', '-z', 'one', 'two', 'three' ], {
-        boolean: ['x','y','z']
-    });
-    
-    t.deepEqual(argv, {
-        x : true,
-        y : false,
-        z : true,
-        _ : [ 'one', 'two', 'three' ]
-    });
-    
-    t.deepEqual(typeof argv.x, 'boolean');
-    t.deepEqual(typeof argv.y, 'boolean');
-    t.deepEqual(typeof argv.z, 'boolean');
-    t.end();
-});
-test('boolean and alias with chainable api', function (t) {
-    var aliased = [ '-h', 'derp' ];
-    var regular = [ '--herp',  'derp' ];
-    var opts = {
-        herp: { alias: 'h', boolean: true }
-    };
-    var aliasedArgv = parse(aliased, {
-        boolean: 'herp',
-        alias: { h: 'herp' }
-    });
-    var propertyArgv = parse(regular, {
-        boolean: 'herp',
-        alias: { h: 'herp' }
-    });
-    var expected = {
-        herp: true,
-        h: true,
-        '_': [ 'derp' ]
-    };
-    
-    t.same(aliasedArgv, expected);
-    t.same(propertyArgv, expected); 
-    t.end();
-});
 
-test('boolean and alias with options hash', function (t) {
-    var aliased = [ '-h', 'derp' ];
-    var regular = [ '--herp', 'derp' ];
-    var opts = {
-        alias: { 'h': 'herp' },
-        boolean: 'herp'
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
-    var expected = {
-        herp: true,
-        h: true,
-        '_': [ 'derp' ]
-    };
-    t.same(aliasedArgv, expected);
-    t.same(propertyArgv, expected);
-    t.end();
-});
+	it('flag boolean default false', function () {
+		const argv = parse(['moo'], {
+			boolean: ['t', 'verbose'],
+			default: { verbose: false, t: false }
+		});
+		
+		expect(argv).to.deep.equal({
+			verbose: false,
+			t: false,
+			_: ['moo']
+		});
+		
+		expect(typeof argv.verbose).to.eql('boolean');
+		expect(typeof argv.t).to.eql('boolean');
 
-test('boolean and alias array with options hash', function (t) {
-    var aliased = [ '-h', 'derp' ];
-    var regular = [ '--herp', 'derp' ];
-    var alt = [ '--harp', 'derp' ];
-    var opts = {
-        alias: { 'h': ['herp', 'harp'] },
-        boolean: 'h'
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
-    var altPropertyArgv = parse(alt, opts);
-    var expected = {
-        harp: true,
-        herp: true,
-        h: true,
-        '_': [ 'derp' ]
-    };
-    t.same(aliasedArgv, expected);
-    t.same(propertyArgv, expected);
-    t.same(altPropertyArgv, expected);
-    t.end();
-});
+	});
 
-test('boolean and alias using explicit true', function (t) {
-    var aliased = [ '-h', 'true' ];
-    var regular = [ '--herp',  'true' ];
-    var opts = {
-        alias: { h: 'herp' },
-        boolean: 'h'
-    };
-    var aliasedArgv = parse(aliased, opts);
-    var propertyArgv = parse(regular, opts);
-    var expected = {
-        herp: true,
-        h: true,
-        '_': [ ]
-    };
+	it('boolean groups', function () {
+		const argv = parse([ '-x', '-z', 'one', 'two', 'three' ], {
+			boolean: ['x','y','z']
+		});
+		
+		expect(argv).to.deep.equal({
+			x : true,
+			y : false,
+			z : true,
+			_ : [ 'one', 'two', 'three' ]
+		});
+		
+		expect(typeof argv.x).to.eql('boolean');
+		expect(typeof argv.y).to.eql('boolean');
+		expect(typeof argv.z).to.eql('boolean');
+	});
+	it('boolean and alias with chainable api', function () {
+		const aliased = [ '-h', 'derp' ];
+		const regular = [ '--herp',  'derp' ];
+		const opts = {
+			herp: { alias: 'h', boolean: true }
+		};
+		const aliasedArgv = parse(aliased, {
+			boolean: 'herp',
+			alias: { h: 'herp' }
+		});
+		const propertyArgv = parse(regular, {
+			boolean: 'herp',
+			alias: { h: 'herp' }
+		});
+		const expected = {
+			herp: true,
+			h: true,
+			'_': [ 'derp' ]
+		};
+		
+		expect(aliasedArgv).to.deep.equal(expected);
+		expect(propertyArgv).to.deep.equal(expected); 
+	});
 
-    t.same(aliasedArgv, expected);
-    t.same(propertyArgv, expected); 
-    t.end();
-});
+	it('boolean and alias with options hash', function () {
+		const aliased = [ '-h', 'derp' ];
+		const regular = [ '--herp', 'derp' ];
+		const opts = {
+			alias: { 'h': 'herp' },
+			boolean: 'herp'
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
+		const expected = {
+			herp: true,
+			h: true,
+			'_': [ 'derp' ]
+		};
+		expect(aliasedArgv).to.deep.equal(expected);
+		expect(propertyArgv).to.deep.equal(expected);
+	});
 
-// regression, see https://github.com/substack/node-optimist/issues/71
-test('boolean and --x=true', function(t) {
-    var parsed = parse(['--boool', '--other=true'], {
-        boolean: 'boool'
-    });
+	it('boolean and alias array with options hash', function () {
+		const aliased = [ '-h', 'derp' ];
+		const regular = [ '--herp', 'derp' ];
+		const alt = [ '--harp', 'derp' ];
+		const opts = {
+			alias: { 'h': ['herp', 'harp'] },
+			boolean: 'h'
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
+		const altPropertyArgv = parse(alt, opts);
+		const expected = {
+			harp: true,
+			herp: true,
+			h: true,
+			'_': [ 'derp' ]
+		};
+		expect(aliasedArgv).to.deep.equal(expected);
+		expect(propertyArgv).to.deep.equal(expected);
+		expect(altPropertyArgv).to.deep.equal(expected);
+	});
 
-    t.same(parsed.boool, true);
-    t.same(parsed.other, 'true');
+	it('boolean and alias using explicit true', function () {
+		const aliased = [ '-h', 'true' ];
+		const regular = [ '--herp',  'true' ];
+		const opts = {
+			alias: { h: 'herp' },
+			boolean: 'h'
+		};
+		const aliasedArgv = parse(aliased, opts);
+		const propertyArgv = parse(regular, opts);
+		const expected = {
+			herp: true,
+			h: true,
+			'_': [ ]
+		};
 
-    parsed = parse(['--boool', '--other=false'], {
-        boolean: 'boool'
-    });
-    
-    t.same(parsed.boool, true);
-    t.same(parsed.other, 'false');
-    t.end();
-});
+		expect(aliasedArgv).to.deep.equal(expected);
+		expect(propertyArgv).to.deep.equal(expected); 
+	});
 
-test('boolean --boool=true', function (t) {
-    var parsed = parse(['--boool=true'], {
-        default: {
-            boool: false
-        },
-        boolean: ['boool']
-    });
+	// regression, see https://github.com/substack/node-optimist/issues/71
+	it('boolean and --x=true', function() {
+		let parsed = parse(['--boool', '--other=true'], {
+			boolean: 'boool'
+		});
 
-    t.same(parsed.boool, true);
-    t.end();
-});
+		expect(parsed.boool).to.eql(true);
+		expect(parsed.other).to.eql('true');
 
-test('boolean --boool=false', function (t) {
-    var parsed = parse(['--boool=false'], {
-        default: {
-          boool: true
-        },
-        boolean: ['boool']
-    });
+		parsed = parse(['--boool', '--other=false'], {
+			boolean: 'boool'
+		});
+		
+		expect(parsed.boool).to.eql(true);
+		expect(parsed.other).to.eql('false');
+	});
 
-    t.same(parsed.boool, false);
-    t.end();
-});
+	it('boolean --boool=true', function () {
+		const parsed = parse(['--boool=true'], {
+			default: {
+				boool: false
+			},
+			boolean: ['boool']
+		});
 
-test('boolean using something similar to true', function (t) {
-    var opts = { boolean: 'h' };
-    var result = parse(['-h', 'true.txt'], opts);
-    var expected = {
-        h: true,
-        '_': ['true.txt']
-    };
+		expect(parsed.boool).to.eql(true);
+	});
 
-    t.same(result, expected);
-    t.end();
+	it('boolean --boool=false', function () {
+		const parsed = parse(['--boool=false'], {
+			default: {
+			boool: true
+			},
+			boolean: ['boool']
+		});
+
+		expect(parsed.boool).to.eql(false);
+	});
+
+	it('boolean using something similar to true', function () {
+		const opts = { boolean: 'h' };
+		const result = parse(['-h', 'true.txt'], opts);
+		const expected = {
+			h: true,
+			'_': ['true.txt']
+		};
+
+		expect(result).to.deep.equal(expected);
+	});
+
 });

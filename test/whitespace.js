@@ -1,8 +1,12 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('whitespace should be whitespace' , function (t) {
-    t.plan(1);
-    var x = parse([ '-x', '\t' ]).x;
-    t.equal(x, '\t');
+
+describe('Whitespace', function () {
+	
+	it('whitespace should be whitespace' , function () {
+		var x = parse([ '-x', '\t' ]).x;
+		expect(x, '\t');
+	});
+
 });

@@ -1,36 +1,40 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('nums', function (t) {
-    var argv = parse([
-        '-x', '1234',
-        '-y', '5.67',
-        '-z', '1e7',
-        '-w', '10f',
-        '--hex', '0xdeadbeef',
-        '789'
-    ]);
-    t.deepEqual(argv, {
-        x : 1234,
-        y : 5.67,
-        z : 1e7,
-        w : '10f',
-        hex : 0xdeadbeef,
-        _ : [ 789 ]
-    });
-    t.deepEqual(typeof argv.x, 'number');
-    t.deepEqual(typeof argv.y, 'number');
-    t.deepEqual(typeof argv.z, 'number');
-    t.deepEqual(typeof argv.w, 'string');
-    t.deepEqual(typeof argv.hex, 'number');
-    t.deepEqual(typeof argv._[0], 'number');
-    t.end();
-});
+describe('Numbers', function () {
 
-test('already a number', function (t) {
-    var argv = parse([ '-x', 1234, 789 ]);
-    t.deepEqual(argv, { x : 1234, _ : [ 789 ] });
-    t.deepEqual(typeof argv.x, 'number');
-    t.deepEqual(typeof argv._[0], 'number');
-    t.end();
+	it('nums', function () {
+		var argv = parse([
+			'-x', '1234',
+			'-y', '5.67',
+			'-z', '1e7',
+			'-w', '10f',
+			'--hex', '0xdeadbeef',
+			'789'
+		]);
+		expect(argv).to.deep.equal({
+			x : 1234,
+			y : 5.67,
+			z : 1e7,
+			w : '10f',
+			hex : 0xdeadbeef,
+			_ : [ 789 ]
+		});
+		expect(typeof argv.x).to.eql('number');
+		expect(typeof argv.y).to.eql('number');
+		expect(typeof argv.z).to.eql('number');
+		expect(typeof argv.w).to.eql('string');
+		expect(typeof argv.hex).to.eql('number');
+		expect(typeof argv._[0]).to.eql('number');
+
+	});
+
+	it('already a number', function () {
+		var argv = parse([ '-x', 1234, 789 ]);
+		expect(argv).to.deep.equal({ x : 1234, _ : [ 789 ] });
+		expect(typeof argv.x).to.eql('number');
+		expect(typeof argv._[0]).to.eql('number');
+
+	});
+
 });

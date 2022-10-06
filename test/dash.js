@@ -1,31 +1,47 @@
-var parse = require('../');
-var test = require('tape');
+import {expect} from 'chai'
+import parse from '../index.js';
 
-test('-', function (t) {
-    t.plan(5);
-    t.deepEqual(parse([ '-n', '-' ]), { n: '-', _: [] });
-    t.deepEqual(parse([ '-' ]), { _: [ '-' ] });
-    t.deepEqual(parse([ '-f-' ]), { f: '-', _: [] });
-    t.deepEqual(
-        parse([ '-b', '-' ], { boolean: 'b' }),
-        { b: true, _: [ '-' ] }
-    );
-    t.deepEqual(
-        parse([ '-s', '-' ], { string: 's' }),
-        { s: '-', _: [] }
-    );
-});
 
-test('-a -- b', function (t) {
-    t.plan(3);
-    t.deepEqual(parse([ '-a', '--', 'b' ]), { a: true, _: [ 'b' ] });
-    t.deepEqual(parse([ '--a', '--', 'b' ]), { a: true, _: [ 'b' ] });
-    t.deepEqual(parse([ '--a', '--', 'b' ]), { a: true, _: [ 'b' ] });
-});
+describe('Dash', function () {
+	
+	it('-', function () {
+		
+		expect(parse([ '-n', '-' ])).to.deep.equal({ n: '-', _: [] });
+		expect(parse([ '-' ])).to.deep.equal({ _: [ '-' ] });
+		expect(parse([ '-f-' ])).to.deep.equal({ f: '-', _: [] });
+		expect(
+			parse([ '-b', '-' ], { boolean: 'b' })
+		).to.deep.equal(
+			{ b: true, _: [ '-' ] }
+		);
+		expect(
+			parse([ '-s', '-' ], { string: 's' })
+		).to.deep.equal(
+			{ s: '-', _: [] }
+		);
+	});
 
-test('move arguments after the -- into their own `--` array', function(t) {
-    t.plan(1);
-    t.deepEqual(
-        parse([ '--name', 'John', 'before', '--', 'after' ], { '--': true }),
-        { name: 'John', _: [ 'before' ], '--': [ 'after' ] });
+	it('-a -- b', function () {
+		
+		expect(parse([ '-a', '--', 'b' ])).to.deep
+			.equal({ a: true, _: [ 'b' ] });
+
+		expect(parse([ '--a', '--', 'b' ])).to.deep
+			.equal({ a: true, _: [ 'b' ] });
+
+		expect(parse([ '--a', '--', 'b' ])).to.deep
+			.equal({ a: true, _: [ 'b' ] });
+
+	});
+
+	it('move arguments after the -- into their own `--` array', function() {
+		
+		const result = parse(
+			[ '--name', 'John', 'before', '--', 'after' ], { '--': true });
+
+		expect( result ).to.deep.equal(
+			{ name: 'John', _: [ 'before' ], '--': [ 'after' ] }
+		);
+	});
+
 });

@@ -1,16 +1,19 @@
-var parse = require('../');
-var test = require('tape');
+import parse from '../index.js';
+import {expect} from 'chai';
 
-test('short -k=v' , function (t) {
-    t.plan(1);
-    
-    var argv = parse([ '-b=123' ]);
-    t.deepEqual(argv, { b: 123, _: [] });
-});
 
-test('multi short -k=v' , function (t) {
-    t.plan(1);
-    
-    var argv = parse([ '-a=whatever', '-b=robots' ]);
-    t.deepEqual(argv, { a: 'whatever', b: 'robots', _: [] });
+describe('Short Key Values', function () {
+	
+	it('short -k=v' , function () {
+		
+		const argv = parse([ '-b=123' ]);
+		expect(argv).to.deep.eql({ b: 123, _: [] });
+	});
+
+	it('multi short -k=v' , function () {
+		
+		const argv = parse([ '-a=whatever', '-b=robots' ]);
+		expect(argv).to.deep.eql({ a: 'whatever', b: 'robots', _: [] });
+	});
+
 });
