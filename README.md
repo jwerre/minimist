@@ -29,13 +29,7 @@ $ node example/parse.js -x 3 -y 4 -n5 -abc --beep=boop foo bar baz
   beep: 'boop' }
 ```
 
-# Methods
-
-``` js
-const parseArgs = require('minimist');
-```
-
-## const argv = parseArgs(args, opts={})
+## Methods
 
 Return an argument object `argv` populated with the array arguments from `args`.
 
@@ -75,12 +69,31 @@ and `argv['--']` with everything after the `--`. Here's an example:
 defined in the `opts` configuration object. If the function returns `false`, the
 unknown option is not added to `argv`.
 
-# Install
+## Install
 
 ```bash
 npm install minimist
 ```
 
-# License
+## Difference between V1 and V2
+
+The only different between the version 1 and 2 is that version 2 uses the ES6 
+Module definition. e.g.:
+
+### Version 1
+``` js
+const parseArgs = require('minimist');
+const argv = parseArgs( process.argv.slice(2) );
+console.log(argv);
+```
+
+### Version 2
+``` js
+import parseArgs from 'minimist';
+const argv = parseArgs( process.argv.slice(2) );
+console.log(argv);
+```
+
+## License
 
 MIT
