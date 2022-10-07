@@ -6,6 +6,7 @@ describe('Stop early', function () {
 	
 
 	it('stops parsing on the first non-option when stopEarly is set', function () {
+	
 		const argv = parse(['--aaa', 'bbb', 'ccc', '--ddd'], {
 			stopEarly: true
 		});
@@ -16,6 +17,5 @@ describe('Stop early', function () {
 		});
 
 	});
-
 
 });
