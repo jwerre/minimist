@@ -1,6 +1,6 @@
 {
 	"name": "@jwerre/minimist",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Parse argument options.",
 	"main": "index.js",
 	"module": "index.js",
