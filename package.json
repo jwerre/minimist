@@ -1,55 +1,56 @@
 {
-    "name": "@jwerre/minimist",
-    "version": "2.0.2",
-    "description": "Parse argument options.",
-    "main": "index.js",
-    "module": "index.js",
-    "type": "module",
-    "devDependencies": {
-        "chai": "^4.3.6",
-        "covert": "^1.0.0",
-        "mocha": "^10.0.0",
-        "tap": "~0.4.0",
-        "tape": "^3.5.0"
-    },
-    "scripts": {
-        "test": "./node_modules/.bin/mocha test",
-        "coverage": "covert test/*.js"
-    },
-    "testling": {
-        "files": "test/*.js",
-        "browsers": [
-            "ie/6..latest",
-            "ff/5",
-            "firefox/latest",
-            "chrome/10",
-            "chrome/latest",
-            "safari/5.1",
-            "safari/latest",
-            "opera/12"
-        ]
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/jwerre/minimist.git"
-    },
-    "homepage": "https://github.com/jwerre/minimist",
-    "keywords": [
-        "argv",
-        "getopt",
-        "parser",
-        "optimist"
-    ],
-    "author": {
-        "name": "James Halliday",
-        "email": "mail@substack.net",
-        "url": "http://substack.net"
-    },
-    "contributors": [
-        {
-            "name": "Jonah Werre",
-            "email": "jonahwerre@gmail.com"
-        }
-    ],
-    "license": "MIT"
+	"name": "@jwerre/minimist",
+	"version": "2.0.2",
+	"description": "Parse argument options.",
+	"main": "index.js",
+	"module": "index.js",
+	"type": "module",
+	"devDependencies": {
+		"chai": "^4.3.6",
+		"check-dts": "^0.6.7",
+		"covert": "^1.0.0",
+		"mocha": "^10.0.0",
+		"tap": "~0.4.0",
+		"tape": "^3.5.0"
+	},
+	"scripts": {
+		"test": "./node_modules/.bin/mocha test && check-dts",
+		"coverage": "covert test/*.js"
+	},
+	"testling": {
+		"files": "test/*.js",
+		"browsers": [
+			"ie/6..latest",
+			"ff/5",
+			"firefox/latest",
+			"chrome/10",
+			"chrome/latest",
+			"safari/5.1",
+			"safari/latest",
+			"opera/12"
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/jwerre/minimist.git"
+	},
+	"homepage": "https://github.com/jwerre/minimist",
+	"keywords": [
+		"argv",
+		"getopt",
+		"parser",
+		"optimist"
+	],
+	"author": {
+		"name": "James Halliday",
+		"email": "mail@substack.net",
+		"url": "http://substack.net"
+	},
+	"contributors": [
+		{
+			"name": "Jonah Werre",
+			"email": "jonahwerre@gmail.com"
+		}
+	],
+	"license": "MIT"
 }
